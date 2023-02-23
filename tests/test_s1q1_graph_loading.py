@@ -7,7 +7,7 @@ from graph import Graph, graph_from_file
 
 class Test_GraphLoading(unittest.TestCase):
     def test_network0(self):
-        g = graph_from_file("input/network.00.in")
+        g = graph_from_file("network.00.in")
         self.assertEqual(g.nb_nodes, 10)
         self.assertEqual(g.nb_edges, 9)
 

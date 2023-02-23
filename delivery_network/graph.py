@@ -125,3 +125,4 @@ def graph_from_file(filename):
         else:
             g.add_edge(int(words[0]), int(words[1]), int(words[2]), int(words[3]))
     return(g)
+    
