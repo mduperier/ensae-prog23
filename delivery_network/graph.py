@@ -1,29 +1,5 @@
 class Graph:
-    """
-    A class representing graphs as adjacency lists and implementing various algorithms on the graphs. Graphs in the class are not oriented. 
-    Attributes: 
-    -----------
-    nodes: NodeType
-        A list of nodes. Nodes can be of any immutable type, e.g., integer, float, or string.
-        We will usually use a list of integers 1, ..., n.
-    graph: dict
-        A dictionnary that contains the adjacency list of each node in the form
-        graph[node] = [(neighbor1, p1, d1), (neighbor1, p1, d1), ...]
-        where p1 is the minimal power on the edge (node, neighbor1) and d1 is the distance on the edge
-    nb_nodes: int
-        The number of nodes.
-    nb_edges: int
-        The number of edges. 
-    """
-
     def __init__(self, nodes=[]):
-        """
-        Initializes the graph with a set of nodes, and no edges. 
-        Parameters: 
-        -----------
-        nodes: list, optional
-            A list of nodes. Default is empty.
-        """
         self.nodes = nodes
         self.graph = dict([(n, []) for n in nodes])
         self.nb_nodes = len(nodes)
@@ -55,16 +31,54 @@ class Graph:
         dist: numeric (int or float), optional
             Distance between node1 and node2 on the edge. Default is 1.
         """
-        raise NotImplementedError
-    
+        if node1 in self.graph:
+            self.graph[node1].append([node2, power_min, dist])
+        else: 
+            self.graph[node1]=[[node2, power_min, dist]]
+            self.nb_nodes+=1
+        if node2 in self.graph:
+            self.graph[node2].append([node1, power_min, dist])
+        else: 
+            self.graph[node2]=[[node1, power_min, dist]]
+            self.nb_nodes+=1
+        self.nb_edges+=1
 
     def get_path_with_power(self, src, dest, power):
+        a=True
+        for cc in self.connected_components_set():
+            if src in cc and dest in cc:
+                a=False
+        
+        if a:
+            return None
         raise NotImplementedError
     
+    def parcours_en_profondeur(self, node, seen=None):
+        if seen is None:
+            seen=[]
+        if node not in seen:
+            seen.append(node)
+            unseen=[]
+            for t in self.graph[node]:
+                if t[0] not in seen:
+                    unseen.append(t[0])
+            for node in unseen:
+                self.parcours_en_profondeur(node, seen)
+        return seen
 
     def connected_components(self):
-        raise NotImplementedError
-
+        ccs=[]
+        for node in self.nodes:
+            if ccs==[]:        
+                ccs.append(self.parcours_en_profondeur(node))
+            else:
+                a=True
+                for cc in ccs:
+                    if node in cc:
+                        a=False
+                if a:
+                    ccs.append(self.parcours_en_profondeur(node))
+        return ccs
 
     def connected_components_set(self):
         """
@@ -72,7 +86,7 @@ class Graph:
         For instance, for network01.in: {frozenset({1, 2, 3}), frozenset({4, 5, 6, 7})}
         """
         return set(map(frozenset, self.connected_components()))
-    
+        
     def min_power(self, src, dest):
         """
         Should return path, min_power. 
@@ -100,4 +114,14 @@ def graph_from_file(filename):
     G: Graph
         An object of the class Graph with the graph from file_name.
     """
-    raise NotImplementedError
+    file = open("..\\/" + filename,'r')
+    lines = file.readlines()
+    file.close()
+    g=Graph([i for i in range(1, int(lines.pop(0).split()[0])+1)])
+    for line in lines:
+        words= line.split()
+        if len(words)==3:
+            g.add_edge(int(words[0]), int(words[1]), int(words[2]))
+        else:
+            g.add_edge(int(words[0]), int(words[1]), int(words[2]), int(words[3]))
+    return(g)
