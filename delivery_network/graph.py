@@ -114,7 +114,7 @@ def graph_from_file(filename):
     G: Graph
         An object of the class Graph with the graph from file_name.
     """
-    file = open("..\\/" + filename,'r')
+    file = open(filename,'r', encoding="utf-8")
     lines = file.readlines()
     file.close()
     g=Graph([i for i in range(1, int(lines.pop(0).split()[0])+1)])
@@ -125,4 +125,3 @@ def graph_from_file(filename):
         else:
             g.add_edge(int(words[0]), int(words[1]), int(words[2]), int(words[3]))
     return(g)
-    
