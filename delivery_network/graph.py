@@ -43,15 +43,7 @@ class Graph:
             self.nb_nodes+=1
         self.nb_edges+=1
 
-    def get_path_with_power(self, src, dest, power):
-        a=True
-        for cc in self.connected_components_set():
-            if src in cc and dest in cc:
-                a=False
-        
-        if a:
-            return None
-        raise NotImplementedError
+    
     
     def parcours_en_profondeur(self, node, seen=None):
         if seen is None:
@@ -91,7 +83,37 @@ class Graph:
         """
         Should return path, min_power. 
         """
+        i = 0
+        while get_path_with_power(self, src, dest, 2**i)!=[]:
+            i = i + 1
+        a = 2**i
+        b = 2**(i-1)
+        for k in range(a,b,-1):
+            if get_path_with_power(self, src, dest, k) == []:
+                return k
+        
+
         raise NotImplementedError
+
+    def get_path_with_power(self, src, dest, power):    
+        for l in self.connected_components() :
+            if src in l:
+                if dest not in l:
+                    return None
+        file = []
+        file.append((src,[src]))
+        print(file)
+        chemins = []
+        while file != []:
+            sommet, chemin = file.pop(0)
+            for t in self.graph[sommet]:
+                if t[2]<= power:
+                    if t[0] == dest:
+                        chemins.append(chemin + [t[0]])
+                    else:
+                        file.append((t[0], chemin + [t[0]]))
+        return chemin[0]
+
 
 
 def graph_from_file(filename):
